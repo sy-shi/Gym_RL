@@ -175,14 +175,14 @@ In `core.py`, the relationships between classes (green) are illustrated in the p
 ### Interaction Rules (Dynamics)
 
 In `World` class, how forces are applied are described. For an agent $i$, its dynamics is governed by
-$$
-\begin{aligned} &m_i \frac{d\boldsymbol{v}^i}{dt} = \boldsymbol{u}_i + \sum_{j\in\mathcal{R}(i)} A \log \left[1+\exp(-\frac{r_{ij}-d_m}{B})\right]\cdot\boldsymbol{p}_{ij} \\ & |\boldsymbol{v}^i| \leq v_{\text{max}} \\ \end{aligned}
-$$
+
+$\begin{aligned} &m_i \frac{d\boldsymbol{v}^i}{dt} = \boldsymbol{u}_i + \sum_{j\in\mathcal{R}(i)} A \log \left[1+\exp(-\frac{r_{ij}-d_m}{B})\right]\cdot\boldsymbol{p}_{ij} \\ & |\boldsymbol{v}^i| \leq v_{\text{max}} \\ \end{aligned}$
+
 which is similar to the social force model where a repulsion force is generated between entities if the distance is smaller than the minimum allowed distance.
 
 ### Action Input
 
-In `environment.py`, the agents’ action space is divided into the force space `u_action_space` and communication space `c_action_space`. The action input is either discrete numbers (0,1…N) or an one-hot N dimensional vector, depending on boolean `discrete_action_input`. And the input are mapped to accleration on different discrete dirctions and communication with different agents. And the acceleration generates the motion of agents further. For more details, refer to `_set_action()`.
+In `environment.py`, the agents' action space is divided into the force space `u_action_space` and communication space `c_action_space`. The action input is either discrete numbers (0,1…N) or an one-hot N dimensional vector, depending on boolean `discrete_action_input`. And the input are mapped to accleration on different discrete dirctions and communication with different agents. And the acceleration generates the motion of agents further. For more details, refer to `_set_action()`.
 
 ![image-20221029011319601](README.assets/image-20221029011319601.png)
 
@@ -197,9 +197,9 @@ For example,
 ### Our Physics
 
 In our research, agents have different communication abilities $r$. And the *agent state* is defined as $\boldsymbol{q}^j \triangleq <\boldsymbol{H},\boldsymbol{h},\boldsymbol{v},\boldsymbol{p},\boldsymbol{\pi},T>^j \in \mathcal{Q}$ , where $\boldsymbol{\pi}$ is an one-hot vector denoting its semantic position. In our world, we don’t have a concept of acceleration. Instead, the motion of agents is governed by the *social force model*:
-$$
-\begin{aligned}m_i \frac{d\boldsymbol{v}^i}{dt} = m_i \frac{\boldsymbol{h}^i-\boldsymbol{v}^i}{\tau} + \sum_{j\in \mathcal{R}(i)} f_{ij} + f_{ik}\end{aligned}
-$$
+
+$\begin{aligned}m_i \frac{d\boldsymbol{v}^i}{dt} = m_i \frac{\boldsymbol{h}^i-\boldsymbol{v}^i}{\tau} + \sum_{j\in \mathcal{R}(i)} f_{ij} + f_{ik}\end{aligned}$
+
 where $f$ denotes the repulsive forces between entities. We can directly utilize `get_collision_force()` from `core.py`, and change its action force input into our motion intention.
 
 Hence, we need to modify the *properties* of classes and *force functions* in `core.py`.
