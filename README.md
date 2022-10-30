@@ -200,7 +200,7 @@ To modify this environment, one should first figure out his/her own RL model, i.
 
 Take the world dynamics of RL in our research as an example:
 
-In our research, the ***state space*** ($\mathcal{S}$) contains a vector $\boldsymbol{h}$, which is the intention (desired velocity) of an agent. And the motion agents are controlled by the $\boldsymbol{h}$ as an input. Dynamics ($\mathcal{P}$) of agents are governed by the *social force model*:
+In our research, the ***state space*** ($$\mathcal{S}$$) contains a vector $\boldsymbol{h}$, which is the intention (desired velocity) of an agent. And the motion agents are controlled by the $\boldsymbol{h}$ as an input. Dynamics ($$\mathcal{P}$$) of agents are governed by the *social force model*:
 
 $$\begin{equation} m_i \frac{d\boldsymbol{v}^i}{dt} = m_i \frac{\boldsymbol{h}^i - \boldsymbol{v}^i}{\tau} + \sum_{j\in \mathcal{R}(i)} f_{ij} + f_{ik}\end{equation}$$
 
@@ -208,4 +208,4 @@ where $f$ denotes the repulsive forces between entities (neighboring agent $j$ a
 
 The ***action space*** ($\mathcal{A}$) for one of our RL problems is a 3-dimensional discrete vector space, so in `environment.py`, the `action_space` property of class `MultiAgentEnv`.
 
-In our simulation, some agents can learn to control the intention $\boldsymbol{h}$ of other agents based on their observation ($\mathcal{O}$) of neighbors' behavior and a task oriented global reward ($\mathcal{R}$). These are described by creating a new scenario, and implementing our own `observation` and `reward` functions. Notice that other than the two functions mentioned, new scenarios needs two other functions `make_world()` and `reset()` to help create the world and initialize.
+In our simulation, some agents can learn to control the intention $\boldsymbol{h}$ of other agents based on their observation ($$\mathcal{O}$$) of neighbors' behavior and a task oriented global reward ($$\mathcal{R}$$). These are described by creating a new scenario, and implementing our own `observation` and `reward` functions. Notice that other than the two functions mentioned, new scenarios needs two other functions `make_world()` and `reset()` to help create the world and initialize.
