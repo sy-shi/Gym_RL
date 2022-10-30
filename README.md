@@ -178,7 +178,7 @@ In `core.py`, the relationships between classes (green) are illustrated in the p
 
 ### Interaction Rules (Dynamics)
 
-In `World` class, how forces are applied are described. For an agent $i$, its dynamics is governed by $$\begin{equation} \begin{aligned}m_i \frac{d\boldsymbol{v}^i}{dt}=\boldsymbol{u}_i + \sum_{j\in \mathcal{R}(i)} A \log[1+\exp(-\frac{r_{ij}-d_m}{B})]\cdot \boldsymbol{p}_{ij} \end{aligned} \end{equation}$$
+In `World` class, how forces are applied are described. For an agent $i$, its dynamics is governed by $$\begin{equation} m_i \frac{d\boldsymbol{v}^i}{dt}=\boldsymbol{u}_i + \sum_{j\in \mathcal{R}(i)} A \log[1+\exp(-\frac{r_{ij}-d_m}{B})]\cdot \boldsymbol{p}_{ij} \end{equation}$$
 
 which is similar to the social force model where a repulsion force is generated between entities if the distance is smaller than the minimum allowed distance.
 
