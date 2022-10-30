@@ -180,9 +180,9 @@ In `core.py`, the relationships between classes (green) are illustrated in the p
 
 In `World` class, how forces are applied are described. For an agent $i$, its dynamics is governed by
 
-$$\begin{equation}
+$\begin{equation}
 \begin{aligned} & m_i \frac{d\boldsymbol{v}^i}{dt} = \boldsymbol{u}_i + \sum_{j\in\mathcal{R}(i)} A \log \left[1+\exp(-\frac{r_{ij}-d_m}{B})\right]\cdot\boldsymbol{p}_{ij} \\ & |\boldsymbol{v}^i| \leq v_{\text{max}} \end{aligned}
-\end{equation}$$
+\end{equation}$
 
 which is similar to the social force model where a repulsion force is generated between entities if the distance is smaller than the minimum allowed distance.
 
@@ -204,9 +204,8 @@ Take the world dynamics of RL in our research as an example.
 
 In our research, agents have different communication abilities $r$. And the *agent state* is defined as a set $\begin{equation} \boldsymbol{q}^j = <\boldsymbol{H},\boldsymbol{h},\boldsymbol{v},\boldsymbol{p},\boldsymbol{\pi},T>^j \end{equation}$, where $\boldsymbol{\pi}$ is an one-hot vector denoting its semantic position. In our world, we don't have a concept of acceleration. Instead, the motion of agents is governed by the *social force model*:
 
-$$
-\begin{aligned}m_i \frac{d\boldsymbol{v}^i}{dt} = m_i \frac{\boldsymbol{h}^i-\boldsymbol{v}^i}{\tau} + \sum_{j\in \mathcal{R}(i)} f_{ij} + f_{ik}\end{aligned}
-$$
+$\begin{equation}\begin{aligned}m_i \frac{d\boldsymbol{v}^i}{dt} = m_i \frac{\boldsymbol{h}^i-\boldsymbol{v}^i}{\tau} + \sum_{j\in \mathcal{R}(i)} f_{ij} + f_{ik}\end{aligned}\end{equation}$
+
 where $f$ denotes the repulsive forces between entities. We can directly utilize `get_collision_force()` from `core.py`, and change its action force input into our motion intention.
 
 Hence, we need to modify the *properties* of classes and *force functions* in `core.py`.
