@@ -180,7 +180,10 @@ In `core.py`, the relationships between classes (green) are illustrated in the p
 
 In `World` class, how forces are applied are described. For an agent $i$, its dynamics is governed by
 
-$$\begin{equation}\begin{aligned} & m_i \frac{d\boldsymbol{v}^i}{dt}={\boldsymbol{u}}_i + \sum_{j\in \mathcal{R}(i)} A \log\left[1+\exp(-\frac{r_{ij}-d_m}{B})\right]\cdot {\boldsymbol{p}}_{ij} \\ & |\boldsymbol{v}^i|<v_{\text{max}}\\ \end{aligned}\end{equation}$$
+$$\begin{array}{l}
+m_{i} \frac{d \boldsymbol{v}^{i}}{d t}=\boldsymbol{u}_{i}+\sum_{j \in \mathcal{R}(i)} A \log \left[1+\exp \left(-\frac{r_{i j}-d_{m}}{B}\right)\right] \cdot \boldsymbol{p}_{i j} \\
+\left|\boldsymbol{v}^{i}\right|<v_{\max }
+\end{array}$$
 
 which is similar to the social force model where a repulsion force is generated between entities if the distance is smaller than the minimum allowed distance.
 
