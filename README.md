@@ -2,7 +2,7 @@
 
 This document serves as an introduction to the implementation logic of reinforcement learning(RL) with Gym. We do not discuss the details of coding such as how action spaces are defined in Gym.
 
-To read this document online, we recommend you to install [Mathjax plugin for github on Chorme](https://chrome.google.com/webstore/detail/mathjax-plugin-for-github/ioemnmodlmafdkllaclgeombjnmnbima) or read in the [preview](/README.md) to show the math expressions. 
+To read the math expressions of this document online, we recommend you to install [Mathjax plugin for github on Chorme](https://chrome.google.com/webstore/detail/mathjax-plugin-for-github/ioemnmodlmafdkllaclgeombjnmnbima) or read in the [preview](/README.md). 
 
 ## Installation and Introduction
 
@@ -27,17 +27,17 @@ Taking the MuJoCo environment as an example, a gym environment usually contains 
 - ***World physics*** describe the rules based on which the environment works. For example, supported by the [DeepMind MuJoCo engine](https://github.com/deepmind/mujoco), the mujoco enviroment have physics laws such as gravity, collision, joint constraints… In constrast, the atari environment has no gravity but has rules such as how bullets fly.
 - ***Environments*** are built based on the world physics and provide an environment for RL. For example, Ant_v4 puts an ant on a plane and users can teach the ant to walk with RL methods inside this environment. Different ***scenarios*** can be set if we hope the ant to learn different skills in this environment.
 
-Next, we’ll talk about how Gym is used in reinforcement learnings.
+Next, we' ll talk about how Gym is used in reinforcement learnings.
 
 ## RL in Gym environments
 
 In reinforcement learning, the following elements are required:
 
 - ***Agent*** obtain information $o_t$ and chooses certain actions from its policy at each time step: $p(a_t\mid s_t) = \pi (o_t)$
-- ***Environment*** is influenced by the agents’ actions and changes its states based on physics laws: $s_{t+1} \sim \mathcal{P} (s_{t+1} \mid s_t,a_t)$
+- ***Environment*** is influenced by the agents' actions and changes its states based on physics laws: $s_{t+1} \sim \mathcal{P} (s_{t+1} \mid s_t,a_t)$
 - ***Reward*** is fed to the agents from the environment to enable them learn from their experiences: $r_t = f_r (s_t,a_t)$
 
-The role of gym environment in RL is right as its name ‘environment’ — get action $a_t$ from agents, step to another state $s_{t+1}$ basaed on world rules, and feedback rewards $r_t$ — illustrated as the picture below:
+The role of gym environment in RL is right as its name 'environment'  — get action $a_t$ from agents, step to another state $s_{t+1}$ basaed on world rules, and feedback rewards $r_t$ — illustrated as the picture below:
 
 ![Untitled](document.assets/Untitled%201.jpeg)
 
@@ -135,8 +135,8 @@ pip install -e PackageName
 
 This Gym environment package is structured as the following picture.
 
-- `core.py` In ‘[core.py](http://core.py)’, the basic properties of world and entities (agents and obstacles) are defined, also their states, actions, and physics interaction laws.
-- `environment.py` Based on ‘[core.py](http://core.py)’, the basic functions such as `step()`, `render()`, and `reset()` are defined. The action space and observation space are also fixed here in `__init__()`.
+- `core.py` In 'core.py', the basic properties of world and entities (agents and obstacles) are defined, also their states, actions, and physics interaction laws.
+- `environment.py` Based on 'core.py', the basic functions such as `step()`, `render()`, and `reset()` are defined. The action space and observation space are also fixed here in `__init__()`.
 - ***scenarios***: different scenarios have different agents and rewards. They are coded for different tasks. For example, in `simple.py` there is only one agent, one goal and no communication. In `simple_reference.py` there are multiple agents and communication between them.
 
 ![image-20221027111433069](README.assets/image-20221027111433069.png)
@@ -180,7 +180,9 @@ In `core.py`, the relationships between classes (green) are illustrated in the p
 
 In `World` class, how forces are applied are described. For an agent $i$, its dynamics is governed by
 $$
-\begin{aligned} &m_i \frac{d\boldsymbol{v}^i}{dt} = \boldsymbol{u}_i + \sum_{j\in\mathcal{R}(i)} A \log \left[1+\exp(-\frac{r_{ij}-d_m}{B})\right]\cdot\boldsymbol{p}_{ij} \\ & |\boldsymbol{v}^i| \leq v_{\text{max}} \\ \end{aligned}
+\begin{equation}
+\begin{aligned} & m_i \frac{d\boldsymbol{v}^i}{dt} = \boldsymbol{u}_i + \sum_{j\in\mathcal{R}(i)} A \log \left[1+\exp(-\frac{r_{ij}-d_m}{B})\right]\cdot\boldsymbol{p}_{ij} \\ & |\boldsymbol{v}^i| \leq v_{\text{max}} \\ \end{aligned}
+\end{equation}
 $$
 which is similar to the social force model where a repulsion force is generated between entities if the distance is smaller than the minimum allowed distance.
 
@@ -194,13 +196,13 @@ In `environment.py`, the agents' action space is divided into the force space `u
 
 > For the simulation setup of different multi-agent researches, the environment should be modified.
 
-To modify this environment, one should first figure out his/her own RL model, i.e. a Markovian decision process $\mathcal{M}=<\mathcal{S},\mathcal{A},\mathcal{O},\mathcal{R},\mathcal{P}>$, where the state transition probability matrix $\mathcal{P}$ is decided by the world dynamics. Then based on your RL model, change `core.py` and `environment.py` respectively.
+To modify this environment, one should first figure out his/her own RL model, i.e. a Markovian decision process $\begin{equation}\mathcal{M}=<\mathcal{S},\mathcal{A},\mathcal{O},\mathcal{R},\mathcal{P}>\end{equation}$, where the state transition probability matrix $\mathcal{P}$ is decided by the world dynamics. Then based on your RL model, change `core.py` and `environment.py` respectively.
 
 Take the world dynamics of RL in our research as an example.
 
 ### Our Physics
 
-In our research, agents have different communication abilities $r$. And the *agent state* is defined as a set $\boldsymbol{q}^j = <\boldsymbol{H},\boldsymbol{h},\boldsymbol{v},\boldsymbol{p},\boldsymbol{\pi},T>^j$, where $\boldsymbol{\pi}$ is an one-hot vector denoting its semantic position. In our world, we don’t have a concept of acceleration. Instead, the motion of agents is governed by the *social force model*:
+In our research, agents have different communication abilities $r$. And the *agent state* is defined as a set $\begin{equation} \boldsymbol{q}^j = <\boldsymbol{H},\boldsymbol{h},\boldsymbol{v},\boldsymbol{p},\boldsymbol{\pi},T>^j \end{equation}$, where $\boldsymbol{\pi}$ is an one-hot vector denoting its semantic position. In our world, we don't have a concept of acceleration. Instead, the motion of agents is governed by the *social force model*:
 
 $$
 \begin{aligned}m_i \frac{d\boldsymbol{v}^i}{dt} = m_i \frac{\boldsymbol{h}^i-\boldsymbol{v}^i}{\tau} + \sum_{j\in \mathcal{R}(i)} f_{ij} + f_{ik}\end{aligned}
