@@ -196,15 +196,15 @@ In `environment.py`, the agents' action space is divided into the force space `u
 
 > For the simulation setup of different multi-agent researches, the environment should be modified.
 
-To modify this environment, one should first figure out his/her own RL model, i.e. a Markovian decision process $\begin{equation}\mathcal{M}=<\mathcal{S},\mathcal{A},\mathcal{O},\mathcal{R},\mathcal{P}>\end{equation}$, where the state transition probability matrix $\mathcal{P}$ is decided by the world dynamics. Then based on your RL model, change `core.py` and `environment.py` respectively.
+To modify this environment, one should first figure out his/her own RL model, i.e. a Markovian decision process $\mathcal{M}=<\mathcal{S},\mathcal{A},\mathcal{O},\mathcal{R},\mathcal{P}>$, where the state transition probability matrix $\mathcal{P}$ is decided by the world dynamics. Then based on your RL model, change `core.py` and `environment.py` respectively.
 
 Take the world dynamics of RL in our research as an example.
 
 ### Our Physics
 
-In our research, agents have different communication abilities $r$. And the *agent state* is defined as a set $\begin{equation} \boldsymbol{q}^j = <\boldsymbol{H},\boldsymbol{h},\boldsymbol{v},\boldsymbol{p},\boldsymbol{\pi},T>^j \end{equation}$, where $\boldsymbol{\pi}$ is an one-hot vector denoting its semantic position. In our world, we don't have a concept of acceleration. Instead, the motion of agents is governed by the *social force model*:
+In our research, agents have different communication abilities $r$. And the *agent state* is defined as a set $\boldsymbol{q}^j = <\boldsymbol{H},\boldsymbol{h},\boldsymbol{v},\boldsymbol{p},\boldsymbol{\pi},T>^j$, where $\boldsymbol{\pi}$ is an one-hot vector denoting its semantic position. In our world, we don't have a concept of acceleration. Instead, the motion of agents is governed by the *social force model*:
 
-$\begin{equation}\begin{aligned}m_i \frac{d\boldsymbol{v}^i}{dt} = m_i \frac{\boldsymbol{h}^i-\boldsymbol{v}^i}{\tau} + \sum_{j\in \mathcal{R}(i)} f_{ij} + f_{ik}\end{aligned}\end{equation}$
+$\begin{aligned} m_i \frac{d\boldsymbol{v}^i}{dt} = m_i \frac{\boldsymbol{h}^i - \boldsymbol{v}^i}{\tau} + \sum_{j\in \mathcal{R}(i)} f_{ij} + f_{ik]}\end{aligned}$
 
 where $f$ denotes the repulsive forces between entities. We can directly utilize `get_collision_force()` from `core.py`, and change its action force input into our motion intention.
 
