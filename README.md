@@ -1,12 +1,12 @@
 # Introduction to OpenAI Gym
 
-This document serves as an introduction to the implementation logic of reinforcement learning(RL) with Gym. We do not discuss the details of coding such as how action spaces are defined in Gym.
+This document serves as an introduction to the implementation logic of reinforcement learning(RL) with Gym and the [multi-agent particle environment](https://github.com/openai/multiagent-particle-envs). I do not discuss the details of coding such as how action spaces are defined in Gym.
 
-To read the math expressions of this document online, we recommend you to install [Mathjax plugin for github on Chorme](https://chrome.google.com/webstore/detail/mathjax-plugin-for-github/ioemnmodlmafdkllaclgeombjnmnbima) or read in the [preview](/README.md). 
+To avoid possible display problems of math expressions on the repository page, please read in the [preview](/README.md). 
 
 ## Installation and Introduction
 
-For installation, I recommend to start a new Anaconda environment, and build the gym environment for your project inside it:
+For Gym installation, I recommend to start a new Anaconda environment, and build the Gym environment for your project inside it:
 
 ```bash
 conda create -n 'CondaEnvName'
@@ -14,17 +14,17 @@ conda activate 'CondaEnvName'
 pip install gym==0.10.5
 ```
 
-This command installs core gym APIs with basic gym environments such as [`Atari`](https://www.gymlibrary.dev/environments/atari/). If you want to install gym with additional environments such as [`MuJoCo`](https://www.gymlibrary.dev/environments/mujoco/), use
+This command installs core Gym APIs with basic Gym environments such as [`Atari`](https://www.gymlibrary.dev/environments/atari/). If you want to install gym with additional environments such as [`MuJoCo`](https://www.gymlibrary.dev/environments/mujoco/), use
 
 ```bash
 pip install gym[mujoco] 
 ```
 
-Taking the MuJoCo environment as an example, a gym environment usually contains the following contents in logic: 
+Taking the MuJoCo environment as an example, a Gym environment usually contains the following contents in logic: 
 
 ![Untitled](document.assets/Untitled.jpeg)
 
-- ***World physics*** describe the rules based on which the environment works. For example, supported by the [DeepMind MuJoCo engine](https://github.com/deepmind/mujoco), the mujoco enviroment have physics laws such as gravity, collision, joint constraints… In constrast, the atari environment has no gravity but has rules such as how bullets fly.
+- ***World physics*** describe the rules based on which the environment works. For example, supported by the [DeepMind MuJoCo engine](https://github.com/deepmind/mujoco), the MuJoCo enviroment have physics laws such as gravity, collision, joint constraints… In constrast, the atari environment has no gravity but has rules such as how bullets fly.
 - ***Environments*** are built based on the world physics and provide an environment for RL. For example, Ant_v4 puts an ant on a plane and users can teach the ant to walk with RL methods inside this environment. Different ***scenarios*** can be set if we hope the ant to learn different skills in this environment.
 
 Next, we' ll talk about how Gym is used in reinforcement learnings.
@@ -37,11 +37,11 @@ In reinforcement learning, the following elements are required:
 - ***Environment*** is influenced by the agents' actions and changes its states based on physics laws: $s_{t+1} \sim \mathcal{P} (s_{t+1} \mid s_t,a_t)$
 - ***Reward*** is fed to the agents from the environment to enable them learn from their experiences: $r_t = f_r (s_t,a_t)$
 
-The role of gym environment in RL is right as its name 'environment'  — get action $a_t$ from agents, step to another state $s_{t+1}$ basaed on world rules, and feedback rewards $r_t$ — illustrated as the picture below:
+The role of Gym environment in RL is right as its name 'environment'  — get action $a_t$ from agents, step to another state $s_{t+1}$ basaed on world rules, and feedback rewards $r_t$ — illustrated as the picture below:
 
 ![Untitled](document.assets/Untitled%201.jpeg)
 
-And following is a commonly seen call to the gym enviornment APIs in RL training process (*multi-agent centralized* *training* as an example):
+And following is a commonly seen call to the Gym enviornment APIs in RL training process (*multi-agent centralized* *training* as an example):
 
 ```python
 import gym
@@ -67,7 +67,7 @@ for episode in range(episodes):
 env.close()
 ```
 
-The below lines show core functions of a gym environment and how gym environments work in RL: 
+The lines below show core functions of a Gym environment and how Gym environments work in RL: 
 
 ```python
 # start an environment
@@ -120,7 +120,7 @@ class CollectiveManipulationEnv(gym.Env):
 		return reward
 ```
 
-Only defining a class will not enable us call the Gym APIs, it must be *registered* and *wrapped into a Python package* according to corrent file structures. View the [document](https://www.gymlibrary.dev/content/environment_creation/) for details. And finally, the package needs to be installed into your Anaconda environment:
+Only defining a class will not enable us call the Gym APIs, it must be *registered* and *wrapped into a Python package* according to corrent file structures. View the [official document](https://www.gymlibrary.dev/content/environment_creation/) for details. And finally, the package needs to be installed into your Anaconda environment:
 
 ```bash
 cd PackageFolder
@@ -131,9 +131,11 @@ pip install -e PackageName
 
 > This is a simple environment but with relative **comprehensive physics world properties** such as communication, collision, force and so on. We can use it to run our RL with some modification. It is **light-weight** compared to other environments, and its good for our large-scale settings.
 
+View their [github repository](https://github.com/openai/multiagent-particle-envs).
+
 ## Introduction
 
-This Gym environment package is structured as the following picture.
+This Gym environment package is structured as the picture below.
 
 - `core.py` In 'core.py', the basic properties of world and entities (agents and obstacles) are defined, also their states, actions, and physics interaction laws.
 - `environment.py` Based on 'core.py', the basic functions such as `step()`, `render()`, and `reset()` are defined. The action space and observation space are also fixed here in `__init__()`.
@@ -158,9 +160,9 @@ def main(scenario_name):
 main('simple')
 ```
 
-We need to use `make_env()` function and input the file name of the desired scenario. The rest parts are the same as other gym environments. Notice that this environment only has 1 channel (5 dimension) for physical action input and 1 channel for communication action input. (See the `_set_action()` in [environment.py](http://environment.py)). So we need to modify its `core.py` and `environment.py`. Then design our own scenarios for large-scale collective manipulation.
+We need to use `make_env()` function and input the file name of the desired scenario. The rest parts are the same as other gym environments. Notice that this environment only has 1 channel (5 dimension) for physical action input and 1 channel for communication action input. (See the `_set_action()` in environment.py). So we need to modify its `core.py` and `environment.py`. Then design our own scenarios for different simulation purposes.
 
-For more comprehensive understanding, read `core.py`, `environment.py`, and `simple_environment.py` to figure out how worlds are set, actions are delivered into the world, and how the worlds are updated.
+For more comprehensive understanding, read the following content and check `core.py`, `environment.py`, `simple_environment.py` to figure out how worlds are set, actions are delivered into the world, and how the worlds are updated.
 
 ## World Physics
 
@@ -173,7 +175,7 @@ In `core.py`, the relationships between classes (green) are illustrated in the p
 ### Entities and States
 
 - ***Entities*** have properties such as color, mass, max speed and a constant acceleration. Users can also define if the entity is movable or collision enabled.
-- ***Agents*** have other properties like if communication allowed, noise, and control input range.
+- ***Agents*** have other properties like if communication allowed, noise, and control input range. Notice that the agent here is different from what it is meant in RL. As a part of the environment, it has no policy and can only execute an action $a_t$ from the policy, stepping to another state $s_t$. I do not recommend defining learning stuff in this `Agent` class.
 - ***AgentState*** includes its position, velocity and current communication signal to exchange information with other agnets.
 
 ### Interaction Rules (Dynamics)
