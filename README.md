@@ -206,6 +206,6 @@ $$\begin{equation} m_i \frac{d\boldsymbol{v}^i}{dt} = m_i \frac{\boldsymbol{h}^i
 
 where $f$ denotes the repulsive forces between entities (neighboring agent $j$ and obstacle $k$). Therefore, in `core.py`, we need to add $\boldsymbol{h}$ to both `AgentState` and `Action`. And slightly change the codes in `get_collision_force()` to make them consistent with our dynamics.
 
-The ***action space*** ($\mathcal{A}$) for one of our RL problems is a 3-dimensional discrete vector space, so in `environment.py`, the `action_space` property of class `MultiAgentEnv`.
+The ***action space*** ( $\mathcal{A}$ ) for one of our RL problems is a 3-dimensional discrete vector space, so in `environment.py`, the `action_space` property of class `MultiAgentEnv`.
 
 In our simulation, some agents can learn to control the intention $\boldsymbol{h}$ of other agents based on their observation ($$\mathcal{O}$$) of neighbors' behavior and a task oriented global reward ($$\mathcal{R}$$). These are described by creating a new scenario, and implementing our own `observation` and `reward` functions. Notice that other than the two functions mentioned, new scenarios needs two other functions `make_world()` and `reset()` to help create the world and initialize.
