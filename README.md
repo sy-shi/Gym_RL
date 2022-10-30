@@ -1,6 +1,6 @@
 # Introduction to OpenAI Gym
 
-This document serves as an introduction to the implementation logic of reinforcement learning(RL) with Gym and the [multi-agent particle environment](https://github.com/openai/multiagent-particle-envs). I do not discuss the details of coding such as how action spaces are defined in Gym.
+This document serves as an introduction to the implementation logic of reinforcement learning(RL) with [Gym](https://www.gymlibrary.dev/) and the [multi-agent particle environment](https://github.com/openai/multiagent-particle-envs). I do not discuss the details of coding such as how action spaces are defined in Gym.
 
 To avoid possible display problems of math expressions on the repository page, please read in the [preview](/README.md). 
 
@@ -175,7 +175,7 @@ In `core.py`, the relationships between classes (green) are illustrated in the p
 ### Entities and States
 
 - ***Entities*** have properties such as color, mass, max speed and a constant acceleration. Users can also define if the entity is movable or collision enabled.
-- ***Agents*** have other properties like if communication allowed, noise, and control input range. Notice that the agent here is different from what it is meant in RL. As a part of the environment, it has no policy and can only execute an action $a_t$ from the policy, stepping to another state $s_t$. I do not recommend defining learning stuff in this `Agent` class.
+- ***Agents*** have other properties like if communication allowed, noise, and control input range. Notice that the agent here is different from what it is meant in RL. As a part of the environment, it has no policy and can only execute an input action $a_t$, stepping to another state $s_t$. Thus, I do not recommend define learning policy/network in this `Agent` class.
 - ***AgentState*** includes its position, velocity and current communication signal to exchange information with other agnets.
 
 ### Interaction Rules (Dynamics)
@@ -184,7 +184,7 @@ In `World` class, how forces are applied are described. For an agent $i$, its dy
 
 $$\begin{equation} m_i \frac{d\boldsymbol{v}^i}{dt}={\boldsymbol{u}}_i + \sum_{j\in \mathcal{R}(i)} A \log\left[1+\exp(-\frac{r_{ij}-d_m}{B})\right]\cdot {\boldsymbol{p}}_{ij} \end{equation}$$
 
-which is similar to the social force model where a repulsion force is generated between entities if the distance is smaller than the minimum allowed distance.
+where a repulsion force is generated between entities if the distance is smaller than the minimum allowed distance. $\boldsymbol{u}_i$ is derived from the action input as a self-driving force of an agent. And the second part maps the distance of its neighboring entities to repulsive forces.
 
 ### Action Input
 
@@ -196,30 +196,16 @@ In `environment.py`, the agents' action space is divided into the force space `u
 
 > For the simulation setup of different multi-agent researches, the environment should be modified.
 
-To modify this environment, one should first figure out his/her own RL model, i.e. a Markovian decision process $\mathcal{M}=<\mathcal{S},\mathcal{A},\mathcal{O},\mathcal{R},\mathcal{P}>$, where the state transition probability matrix $\mathcal{P}$ is decided by the world dynamics. Then based on your RL model, change `core.py` and `environment.py` respectively.
+To modify this environment, one should first figure out his/her own RL model, i.e. a Markovian decision process $\mathcal{M}=<\mathcal{S},\mathcal{A},\mathcal{P},\mathcal{O},\mathcal{R},>$, where the state transition probability matrix $\mathcal{P}: \mathcal{S}\times \mathcal{S} \mapsto \left[0,1\right]$ is decided by the world dynamics. Then based on your RL model, change `core.py`, `environment.py` respectively and define new scenarios.
 
-Take the world dynamics of RL in our research as an example.
+Take the world dynamics of RL in our research as an example:
 
-### Our Physics
-
-In our research, agents have different communication abilities $r$. And the *agent state* is defined as a set $\boldsymbol{q}^j = <\boldsymbol{H},\boldsymbol{h},\boldsymbol{v},\boldsymbol{p},\boldsymbol{\pi},T>^j$, where $\boldsymbol{\pi}$ is an one-hot vector denoting its semantic position. In our world, we don't have a concept of acceleration. Instead, the motion of agents is governed by the *social force model*:
+In our research, the ***state space*** ($\mathcal{S}$) contains a vector $\boldsymbol{h}$, which is the intention (desired velocity) of an agent. And the motion agents are controlled by the $\boldsymbol{h}$ as an input. Dynamics ($\mathcal{P}$) of agents are governed by the *social force model*:
 
 $$\begin{equation} m_i \frac{d\boldsymbol{v}^i}{dt} = m_i \frac{\boldsymbol{h}^i - \boldsymbol{v}^i}{\tau} + \sum_{j\in \mathcal{R}(i)} f_{ij} + f_{ik}\end{equation}$$
 
-where $f$ denotes the repulsive forces between entities. We can directly utilize `get_collision_force()` from `core.py`, and change its action force input into our motion intention.
+where $f$ denotes the repulsive forces between entities (neighboring agent $j$ and obstacle $k$). Therefore, in `core.py`, we need to add $\boldsymbol{h}$ to both `AgentState` and `Action`. And slightly change the codes in `get_collision_force()` to make them consistent with our dynamics.
 
-Hence, we need to modify the *properties* of classes and *force functions* in `core.py`.
+The ***action space*** ($\mathcal{A}$) for one of our RL problems is a 3-dimensional discrete vector space, so in `environment.py`, the `action_space` property of class `MultiAgentEnv`.
 
-The action of each agent is also different. For dynamic election, the action space is defined as an discrete space $\mathcal{A} = T \times \mathcal{A}_{\kappa}$. Therefore, we also need to modify the action input space in `environment.py`.
-
-### Core.py
-
-- ***Agent***: As for the properties of agents, we need to add communication ability, that is, the communication range $r$.
-- ***AgentState***: For our state $\boldsymbol{q}$, besides EntityStates, our agents have status $T$, semantic intention $\boldsymbol{H}$,motion intention $\boldsymbol{h}$, and a semantic vector $\boldsymbol{\pi}$ which depends on the division of the space.
-- ***Action***: From `apply_action_force()` we know that `u` in Action is a 2D physics force added by the agent itself.
-
-### Environment.py
-
-### New Scenario
-
-> We need to define our rewards and observations for RL in new scenraio. And we also need to define how agents communicate with each other inside.
+In our simulation, some agents can learn to control the intention $\boldsymbol{h}$ of other agents based on their observation ($\mathcal{O}$) of neighbors' behavior and a task oriented global reward ($\mathcal{R}$). These are described by creating a new scenario, and implementing our own `observation` and `reward` functions. Notice that other than the two functions mentioned, new scenarios needs two other functions `make_world()` and `reset()` to help create the world and initialize.
