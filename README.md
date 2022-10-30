@@ -1,5 +1,9 @@
 # Introduction to OpenAI Gym
 
+This document serves as an introduction to the implementation logic of reinforcement learning(RL) with Gym. We do not discuss the details of coding such as how action spaces are defined in Gym.
+
+To read this document online, we recommend you to install [Mathjax plugin for github on Chorme](https://chrome.google.com/webstore/detail/mathjax-plugin-for-github/ioemnmodlmafdkllaclgeombjnmnbima) or read in the [preview](/README.md) to show the math expressions. 
+
 ## Installation and Introduction
 
 For installation, I recommend to start a new Anaconda environment, and build the gym environment for your project inside it:
@@ -175,9 +179,9 @@ In `core.py`, the relationships between classes (green) are illustrated in the p
 ### Interaction Rules (Dynamics)
 
 In `World` class, how forces are applied are described. For an agent $i$, its dynamics is governed by
-
-$\begin{aligned} &m_i \frac{d\boldsymbol{v}^i}{dt} = \boldsymbol{u}_i + \sum_{j\in\mathcal{R}(i)} A \log \left[1+\exp(-\frac{r_{ij}-d_m}{B})\right]\cdot\boldsymbol{p}_{ij} \\ & |\boldsymbol{v}^i| \leq v_{\text{max}} \\ \end{aligned}$
-
+$$
+\begin{aligned} &m_i \frac{d\boldsymbol{v}^i}{dt} = \boldsymbol{u}_i + \sum_{j\in\mathcal{R}(i)} A \log \left[1+\exp(-\frac{r_{ij}-d_m}{B})\right]\cdot\boldsymbol{p}_{ij} \\ & |\boldsymbol{v}^i| \leq v_{\text{max}} \\ \end{aligned}
+$$
 which is similar to the social force model where a repulsion force is generated between entities if the distance is smaller than the minimum allowed distance.
 
 ### Action Input
@@ -192,14 +196,15 @@ In `environment.py`, the agents' action space is divided into the force space `u
 
 To modify this environment, one should first figure out his/her own RL model, i.e. a Markovian decision process $\mathcal{M}=<\mathcal{S},\mathcal{A},\mathcal{O},\mathcal{R},\mathcal{P}>$, where the state transition probability matrix $\mathcal{P}$ is decided by the world dynamics. Then based on your RL model, change `core.py` and `environment.py` respectively.
 
-For example, 
+Take the world dynamics of RL in our research as an example.
 
 ### Our Physics
 
-In our research, agents have different communication abilities $r$. And the *agent state* is defined as $\boldsymbol{q}^j \triangleq <\boldsymbol{H},\boldsymbol{h},\boldsymbol{v},\boldsymbol{p},\boldsymbol{\pi},T>^j \in \mathcal{Q}$ , where $\boldsymbol{\pi}$ is an one-hot vector denoting its semantic position. In our world, we don’t have a concept of acceleration. Instead, the motion of agents is governed by the *social force model*:
+In our research, agents have different communication abilities $r$. And the *agent state* is defined as a set $\boldsymbol{q}^j = <\boldsymbol{H},\boldsymbol{h},\boldsymbol{v},\boldsymbol{p},\boldsymbol{\pi},T>^j$, where $\boldsymbol{\pi}$ is an one-hot vector denoting its semantic position. In our world, we don’t have a concept of acceleration. Instead, the motion of agents is governed by the *social force model*:
 
-$\begin{aligned}m_i \frac{d\boldsymbol{v}^i}{dt} = m_i \frac{\boldsymbol{h}^i-\boldsymbol{v}^i}{\tau} + \sum_{j\in \mathcal{R}(i)} f_{ij} + f_{ik}\end{aligned}$
-
+$$
+\begin{aligned}m_i \frac{d\boldsymbol{v}^i}{dt} = m_i \frac{\boldsymbol{h}^i-\boldsymbol{v}^i}{\tau} + \sum_{j\in \mathcal{R}(i)} f_{ij} + f_{ik}\end{aligned}
+$$
 where $f$ denotes the repulsive forces between entities. We can directly utilize `get_collision_force()` from `core.py`, and change its action force input into our motion intention.
 
 Hence, we need to modify the *properties* of classes and *force functions* in `core.py`.
